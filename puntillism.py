@@ -24,7 +24,9 @@
 
 import os
 import sys
-import gtk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 import random
 try:
     import pygame
@@ -89,8 +91,8 @@ class Puntillism():
             frames = clock.get_fps()
 
             #GTK events
-            while gtk.events_pending():
-                gtk.main_iteration()
+            while Gtk.events_pending():
+                Gtk.main_iteration()
 
             events = pygame.event.get()
             for event in events:

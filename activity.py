@@ -23,16 +23,18 @@
 # Nirav Patel <sugarlabs@spongezone.net>
 
 import os
-import gtk
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 import pygame
 import sugargame
 import sugargame.canvas
-from sugar.activity import activity
-from sugar.graphics.toolbarbox import ToolbarBox
-from sugar.activity.widgets import ActivityToolbarButton
-from sugar.activity.widgets import StopButton
-from sugar.graphics.toolbutton import ToolButton
-from sugar.datastore import datastore
+from sugar3.activity import activity
+from sugar3.graphics.toolbarbox import ToolbarBox
+from sugar3.activity.widgets import ActivityToolbarButton
+from sugar3.activity.widgets import StopButton
+from sugar3.graphics.toolbutton import ToolButton
+from sugar3.datastore import datastore
 from gettext import gettext as _
 
 import puntillism
@@ -56,25 +58,25 @@ class Activity(activity.Activity):
 
     def build_toolbar(self):
 
-        toolbox = ToolbarBox()
+        toolbar_box = ToolbarBox()
         activity_button = ActivityToolbarButton(self)
-        toolbox.toolbar.insert(activity_button, -1)
+        toolbar_box.toolbar.insert(activity_button, -1)
         activity_button.show()
 
-        barra = toolbox.toolbar
+        barra = toolbar_box.toolbar
 
-        separador1 = gtk.SeparatorToolItem()
+        separador1 = Gtk.SeparatorToolItem()
         separador1.props.draw = True
         barra.insert(separador1, 1)
 
-        item1 = gtk.ToolItem()
-        self.label_radio1 = gtk.Label()
+        item1 = Gtk.ToolItem()
+        self.label_radio1 = Gtk.Label()
         self.label_radio1.set_text(_('Circles between') + ' ')
         item1.add(self.label_radio1)
         barra.insert(item1, 2)
 
-        item2 = gtk.ToolItem()
-        self.cradio1 = gtk.SpinButton()
+        item2 = Gtk.ToolItem()
+        self.cradio1 = Gtk.SpinButton()
         self.cradio1.set_range(1, 20)
         self.cradio1.set_increments(1, 2)
         self.cradio1.props.value = self.radio_uno
@@ -82,14 +84,14 @@ class Activity(activity.Activity):
         item2.add(self.cradio1)
         barra.insert(item2, 3)
 
-        item3 = gtk.ToolItem()
-        self.label_and = gtk.Label()
+        item3 = Gtk.ToolItem()
+        self.label_and = Gtk.Label()
         self.label_and.set_text(' ' + _('and') + ' ')
         item3.add(self.label_and)
         barra.insert(item3, 4)
 
-        item4 = gtk.ToolItem()
-        self.cradio2 = gtk.SpinButton()
+        item4 = Gtk.ToolItem()
+        self.cradio2 = Gtk.SpinButton()
         self.cradio2.set_range(1, 20)
         self.cradio2.set_increments(1, 2)
         self.cradio2.props.value = self.radio_dos
@@ -97,7 +99,7 @@ class Activity(activity.Activity):
         item4.add(self.cradio2)
         barra.insert(item4, 5)
 
-        separator1 = gtk.SeparatorToolItem()
+        separator1 = Gtk.SeparatorToolItem()
         separator1.props.draw = True
         separator1.set_expand(False)
         barra.insert(separator1,6)
@@ -108,7 +110,7 @@ class Activity(activity.Activity):
         barra.insert(save_button, 7)
         save_button.show()
 
-        separator2 = gtk.SeparatorToolItem()
+        separator2 = Gtk.SeparatorToolItem()
         separator2.props.draw = False
         separator2.set_expand(True)
         barra.insert(separator2,8)
@@ -118,9 +120,9 @@ class Activity(activity.Activity):
         barra.insert(stop_button, 9)
         stop_button.show()
 
-        self.set_toolbar_box(toolbox)
+        self.set_toolbar_box(toolbar_box)
 
-        toolbox.show_all()
+        toolbar_box.show_all()
 
     def cradio1_valor(self, radio, value):
         self.radio_uno = int(radio.props.value)
