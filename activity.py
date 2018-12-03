@@ -152,3 +152,5 @@ class Activity(activity.Activity):
 
         journalobj.destroy()
 
+    def get_preview(self):
+        return self._pygamecanvas.get_preview()
