@@ -52,9 +52,12 @@ class Activity(activity.Activity):
         self.actividad = puntillism.Puntillism(self)
 
         self.build_toolbar()
-        self._pygamecanvas = sugargame.canvas.PygameCanvas(self)
+        self._pygamecanvas = sugargame.canvas.PygameCanvas(self,
+            main= self.actividad.run,
+            modules= [pygame.display])
+
         self.set_canvas(self._pygamecanvas)
-        self._pygamecanvas.run_pygame(self.actividad.run)
+        self._pygamecanvas.grab_focus()
 
     def build_toolbar(self):
 
