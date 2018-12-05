@@ -24,7 +24,9 @@
 
 import os
 import gi
+gi.require_version('Gdk', '3.0')
 gi.require_version('Gtk', '3.0')
+from gi.repository import Gdk
 from gi.repository import Gtk
 import pygame
 import sugargame
@@ -79,8 +81,11 @@ class Activity(activity.Activity):
         item1.add(self.label_radio1)
         barra.insert(item1, 2)
 
+        grayed = Gdk.Color(20000.0, 20000.0, 20000.0)
+
         item2 = Gtk.ToolItem()
         self.cradio1 = Gtk.SpinButton()
+        self.cradio1.modify_bg(Gtk.StateType.NORMAL, grayed)
         self.cradio1.set_range(1, 20)
         self.cradio1.set_increments(1, 2)
         self.cradio1.props.value = self.radio_uno
@@ -96,6 +101,7 @@ class Activity(activity.Activity):
 
         item4 = Gtk.ToolItem()
         self.cradio2 = Gtk.SpinButton()
+        self.cradio2.modify_bg(Gtk.StateType.NORMAL, grayed)
         self.cradio2.set_range(1, 20)
         self.cradio2.set_increments(1, 2)
         self.cradio2.props.value = self.radio_dos
