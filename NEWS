@@ -1,0 +1,16 @@
+v9
+
+* Add to README.md (Aniket Mathur),
+* Add contrast to Gtk.SpinButtons (Aniket Mathur),
+* Add missing get_preview (James Cameron),
+* Fix whitespace in call to PygameCanvas (James Cameron),
+* Update to sugargame v1.2 (Swarup N),
+* Port deprecated GObject code to GLib(Swarup N),
+* ported to Gtk3 (Yash Agrawal),
+* Merge pull request #2 from leonardcj/master(Alan Aguiar),
+* push from pootle (leonardcj),
+* Merge pull request #1 from rbuj/ca-20160425(Alan Aguiar)
+* Add Catalan translation (Robert Antoni Buj Gelonch),
+* Fix: Ported Actvity to Gtk+3 (Rahul Bothra)
+* Create LICENSE.md (Alan Aguiar),
+* Create README.md (Alan Aguiar)
