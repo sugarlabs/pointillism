@@ -1,10 +1,11 @@
 [Activity]
-name = Pointillism 
+name = Pointillism
 activity_version = 9
 bundle_id = org.laptop.community.Pointillism
 exec = sugar-activity activity.Activity
 show_launcher = yes
 icon = activity
 license = GPLv3+
-summary = Creates a pointillist image from the camera captures
+summary = Create a pointillist image from the camera
 repository = https://github.com/sugarlabs/pointillism.git
+tags = Art
