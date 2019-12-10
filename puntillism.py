@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Pointillism
@@ -31,8 +31,8 @@ import random
 try:
     import pygame
     from pygame import camera
-except ImportError:
-    print 'Error in import Pygame. This activity requires Pygame 1.9'
+except (ImportError, ModuleNotFoundError):
+    print('Error in import Pygame. This activity requires Pygame 1.9')
 
 class Puntillism():
 
@@ -65,8 +65,11 @@ class Puntillism():
         clock = pygame.time.Clock()
 
         cam = camera.Camera("/dev/video0", (640, 480), "RGB")
-        cam.set_controls(True, False)
         cam.start()
+        try:
+            cam.set_controls(hflip=True)
+        except SystemError:
+            pass
 
         cap = pygame.surface.Surface((640, 480), 0, screen)
         frames = 0

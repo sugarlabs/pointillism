@@ -2,7 +2,7 @@
 name = Pointillism
 activity_version = 9
 bundle_id = org.laptop.community.Pointillism
-exec = sugar-activity activity.Activity
+exec = sugar-activity3 activity.Activity
 show_launcher = yes
 icon = activity
 license = GPLv3+
