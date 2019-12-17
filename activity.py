@@ -31,11 +31,13 @@ from gi.repository import Gtk
 import pygame
 import sugargame
 import sugargame.canvas
+from sugar3 import mime
 from sugar3.activity import activity
 from sugar3.graphics.toolbarbox import ToolbarBox
 from sugar3.activity.widgets import ActivityToolbarButton
 from sugar3.activity.widgets import StopButton
 from sugar3.graphics.toolbutton import ToolButton
+from sugar3.graphics.objectchooser import ObjectChooser
 from sugar3.datastore import datastore
 from gettext import gettext as _
 
@@ -109,6 +111,9 @@ class Activity(activity.Activity):
         item4.add(self.cradio2)
         barra.insert(item4, 5)
 
+
+        
+
         separator1 = Gtk.SeparatorToolItem()
         separator1.props.draw = True
         separator1.set_expand(False)
@@ -120,14 +125,20 @@ class Activity(activity.Activity):
         barra.insert(save_button, 7)
         save_button.show()
 
+        open_button = ToolButton('fileopen')
+        open_button.set_tooltip(_('Open Image'))
+        open_button.connect('clicked', self.open_image)
+        barra.insert(open_button, 8)
+        open_button.show()
+
         separator2 = Gtk.SeparatorToolItem()
         separator2.props.draw = False
         separator2.set_expand(True)
-        barra.insert(separator2,8)
+        barra.insert(separator2,9)
 
         stop_button = StopButton(self)
         stop_button.props.accelerator = '<Ctrl>q'
-        barra.insert(stop_button, 9)
+        barra.insert(stop_button, 10)
         stop_button.show()
 
         self.set_toolbar_box(toolbar_box)
@@ -144,6 +155,7 @@ class Activity(activity.Activity):
 
     def _savebutton_cb(self,button):
         pygame.event.post(pygame.event.Event(pygame.USEREVENT, action='savebutton'))
+    
 
     def save_image(self,image):
         journalobj = datastore.create()
@@ -157,6 +169,24 @@ class Activity(activity.Activity):
         datastore.write(journalobj)
 
         journalobj.destroy()
+    
+    def open_image(self,button):
+        pygame.event.post(pygame.event.Event(pygame.USEREVENT, action='openbutton'))
+
+    def choose_image_from_journal_cb(self):
+        
+        ''' Create a chooser for image objects '''
+
+        self.image_id = None
+        chooser = ObjectChooser(what_filter=mime.GENERIC_TYPE_IMAGE)
+        result = chooser.run()
+        if result == Gtk.ResponseType.ACCEPT:
+            jobject = chooser.get_selected_object()
+            self.image_id = str(jobject._object_id)
+        print(str(jobject.get_file_path()))
+        puntillism.Puntillism.file_path = str(jobject.get_file_path())
+        return str(jobject.get_file_path())
 
     def get_preview(self):
         return self._pygamecanvas.get_preview()
+
