@@ -84,7 +84,6 @@ class Puntillism():
         x_s, y_s = screen.get_size()
 
         clock = pygame.time.Clock()
-<<<<<<< HEAD
         running = True
         camfound = False
         try:
@@ -95,11 +94,6 @@ class Puntillism():
         except SystemError:
             running = False
             camfound = False
-=======
-
-        cam = camera.Camera("/dev/video0", (640, 480), "RGB")
-        cam.start()
->>>>>>> 74965ff70703843755c60a96533e68ebe61fdcde
         try:
             cam.set_controls(hflip=True)
         except SystemError:
