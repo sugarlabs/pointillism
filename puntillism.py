@@ -107,8 +107,8 @@ class Puntillism():
             green0 = (0, 255, 0) 
             white0 = (255, 255, 255) 
             blue0 = (0, 0, 128) 
-            font = pygame.font.Font('freesansbold.ttf', 16)
-            text = font.render('uh-oh! You doesn\'t seem to have a Camera. Use Open Image option', True, green0, blue0) 
+            font = pygame.font.Font('freesansbold.ttf', 32)
+            text = font.render('Camera not found', True, green0, blue0) 
             textRect = text.get_rect() 
             textRect.center = (x_s // 2, y_s // 2)
             print("LOG: No /dev/video0 found")
@@ -117,123 +117,87 @@ class Puntillism():
             pygame.display.update() 
         
         while (not camfound) and camNotFound_holder:
-    
-            # print(self.file_path) Uncomment this line to know file path
-            # For debuggers only
             
             if self.file_path != "NULL":
                   
                 cad = pygame.image.load(self.file_path).convert_alpha()
                 cad = pygame.transform.scale(cad, (640,480))
                 rect = []
-                
-                for z in range(max(20, int(frames)*10)):
-                    x = random.random()
-                    y = random.random()
-                    if self.radio1 > self.radio2:
-                        aux = self.radio2
-                        self.radio2 = self.radio1
-                        self.radio1 = aux
-                    elif self.radio1 == self.radio2:
-                        self.radio2 = self.radio2 + 1
-                    num = random.randrange(self.radio1, self.radio2, 1)
-                    
-                    rect.append(pygame.draw.circle(screen, cad.get_at((int(x * 640), int(y * 480))), (int(x * x_s), int(y * y_s)), num, 0))
-                pygame.display.update(rect)
+                self.create_rect(cad, rect)
 
             else:
-                
                 screen.fill((0,0,0)) 
                 screen.blit(text, textRect) 
                 pygame.display.update()
-            
-            clock.tick()
-            frames = clock.get_fps()
 
             #GTK events
             while Gtk.events_pending():
                 Gtk.main_iteration()
 
             events = pygame.event.get()
-            for event in events:
-                #log.debug( "Event: %s", event )
-                if event.type == pygame.QUIT:
-                    camNotFound_holder = False
-                    
-                elif event.type == pygame.VIDEORESIZE:
-                    pygame.display.set_mode(event.size, pygame.RESIZABLE)
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        
-                        camNotFound_holder = False
-                    elif event.key == pygame.K_s:
-                        self.parent.save_image(screen)
-                elif event.type == pygame.USEREVENT:
-                    if hasattr(event,'action'):
-                        if event.action == 'savebutton':
-                            self.parent.save_image(screen)
-                        if event.action == 'openbutton':
-                            #global file_path
-                            print("OPEN")
-                            self.file_path = self.parent.choose_image_from_journal_cb()
-                            # print(">.... ", self.file_path)
-                            print("LOG: File Loaded Successfully")
-                            screen.fill((0,0,0)) 
-                            
-                            
+            self.read_events(events)
 
         # after checking if camera exists, cam is not accepted if /dev/video0 > null
         # Usually null gives a black screen, before initiating the display
         # A black screen is filled 
+
         if running:
             screen.fill((0,0,0))
             pygame.display.update()
 
         while running:
             cap = cam.get_image(cap)
-            # Command for loading image cad = pygame.image.load("xx.png").convert_alpha()
-            # print(cap, type(cap), cad, type(cad), "CAAAAAAAAAAAAAAAAAAAAAAAAAAP")
             rect = []
-            
-
-            for z in range(max(20, int(frames)*10)):
-                x = random.random()
-                y = random.random()
-                if self.radio1 > self.radio2:
-                    aux = self.radio2
-                    self.radio2 = self.radio1
-                    self.radio1 = aux
-                elif self.radio1 == self.radio2:
-                    self.radio2 = self.radio2 + 1
-                num = random.randrange(self.radio1, self.radio2, 1)
-                rect.append(pygame.draw.circle(screen, cap.get_at((int(x * 640), int(y * 480))), (int(x * x_s), int(y * y_s)), num, 0))
-            pygame.display.update(rect)
-
-            clock.tick()
-            frames = clock.get_fps()
+            self.create_rect(cap, rect)
 
             #GTK events
             while Gtk.events_pending():
                 Gtk.main_iteration()
 
             events = pygame.event.get()
-            for event in events:
-                #log.debug( "Event: %s", event )
-                if event.type == pygame.QUIT:
-                    cam.stop()
-                    running = False
-                elif event.type == pygame.VIDEORESIZE:
-                    pygame.display.set_mode(event.size, pygame.RESIZABLE)
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        cam.stop()
-                        running = False
-                    elif event.key == pygame.K_s:
+            self.read_events(events)
+
+    def create_rect(self, cad, rect)
+        for z in range(max(20, int(frames)*10)):
+            x = random.random()
+            y = random.random()
+            if self.radio1 > self.radio2:
+                aux = self.radio2
+                self.radio2 = self.radio1
+                self.radio1 = aux
+            elif self.radio1 == self.radio2:
+                self.radio2 = self.radio2 + 1
+            num = random.randrange(self.radio1, self.radio2, 1)
+            
+            rect.append(pygame.draw.circle(screen, cad.get_at((int(x * 640), int(y * 480))), (int(x * x_s), int(y * y_s)), num, 0))
+        pygame.display.update(rect)
+        clock.tick()
+        frames = clock.get_fps()
+    
+    def read_events(self, events):
+        for event in events:
+            
+            if event.type == pygame.QUIT:
+                camNotFound_holder = False
+                
+            elif event.type == pygame.VIDEORESIZE:
+                pygame.display.set_mode(event.size, pygame.RESIZABLE)
+
+            elif event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_ESCAPE:
+                    camNotFound_holder = False
+
+                elif event.key == pygame.K_s:
+                    self.parent.save_image(screen)
+
+            elif event.type == pygame.USEREVENT:
+
+                if hasattr(event,'action'):
+
+                    if event.action == 'savebutton':
                         self.parent.save_image(screen)
-                elif event.type == pygame.USEREVENT:
-                    if hasattr(event,'action'):
-                        if event.action == 'savebutton':
-                            self.parent.save_image(screen)
-            #pygame.display.flip()
 
-
+                    if event.action == 'openbutton':
+                        self.file_path = self.parent.choose_image_from_journal_cb()
+                        screen.fill((0,0,0)) 
