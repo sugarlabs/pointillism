@@ -28,9 +28,6 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 import random
-from sugar3 import mime
-from sugar3.graphics.objectchooser import ObjectChooser
-from sugar3.datastore import datastore
 
 try:
     import pygame
@@ -52,18 +49,6 @@ class Puntillism():
     def poner_radio2(self, radio):
         self.radio2 = radio
 
-    def _choose_image_from_journal_cb(self, button):
-        ''' Create a chooser for image objects '''
-
-        self.image_id = None
-        chooser = ObjectChooser(what_filter=mime.GENERIC_TYPE_IMAGE)
-        result = chooser.run()
-        if result == Gtk.ResponseType.ACCEPT:
-            jobject = chooser.get_selected_object()
-            self.image_id = str(jobject._object_id)
-        print(str(jobject.get_file_path()))
-        puntillism.Puntillism.file_path = str(jobject.get_file_path())
-        return str(jobject.get_file_path())
 
     def run(self):
         #size = (1200,900)
@@ -74,7 +59,7 @@ class Puntillism():
         self.radio1 = 2
         self.radio2 = 12
 
-        camNotFound_holder = False  # create a local variable to check camera not found and in loop
+        self.camNotFound_holder = False  # create a local variable to check camera not found and in loop
 
         screen = pygame.display.get_surface()
         screen.fill((0,0,0))
@@ -84,16 +69,16 @@ class Puntillism():
         x_s, y_s = screen.get_size()
 
         clock = pygame.time.Clock()
-        running = True
-        camfound = False
+        self.running = True
+        self.camfound = False
         try:
             cam = camera.Camera("/dev/video0", (640, 480), "RGB")
             cam.start()
-            camfound = True
+            self.camfound = True
             
         except SystemError:
-            running = False
-            camfound = False
+            self.running = False
+            self.camfound = False
         try:
             cam.set_controls(hflip=True)
         except SystemError:
@@ -102,62 +87,48 @@ class Puntillism():
         cap = pygame.surface.Surface((640, 480), 0, screen)
         frames = 0
         
-        if not camfound:
-            # define some colors for not cam found
-            green0 = (0, 255, 0) 
-            white0 = (255, 255, 255) 
-            blue0 = (0, 0, 128) 
-            font = pygame.font.Font('freesansbold.ttf', 32)
-            text = font.render('Camera not found', True, green0, blue0) 
-            textRect = text.get_rect() 
-            textRect.center = (x_s // 2, y_s // 2)
-            print("LOG: No /dev/video0 found")
-            camNotFound_holder = True
+        if self.running:
             screen.fill((0,0,0))
-            pygame.display.update() 
-        
-        while (not camfound) and camNotFound_holder:
-            
-            if self.file_path != "NULL":
-                  
-                cad = pygame.image.load(self.file_path).convert_alpha()
-                cad = pygame.transform.scale(cad, (640,480))
-                rect = []
-                self.create_rect(cad, rect)
+            pygame.display.update()
 
-            else:
-                screen.fill((0,0,0)) 
-                screen.blit(text, textRect) 
-                pygame.display.update()
+        while self.running:
+            cap = cam.get_image(cap)
+            rect = []
+            self.create_rect(cap, rect, frames, clock,screen,x_s, y_s)
 
             #GTK events
             while Gtk.events_pending():
                 Gtk.main_iteration()
 
             events = pygame.event.get()
-            self.read_events(events)
+            self.read_events(events,screen)
+
+        # define some colors for not cam found
+        green0 = (0, 255, 0) 
+        white0 = (255, 255, 255) 
+        blue0 = (0, 0, 128) 
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render('Camera not found', True, green0, blue0) 
+        textRect = text.get_rect() 
+        textRect.center = (x_s // 2, y_s // 2)
+
+        if not self.camfound:
+            print("LOG: No /dev/video0 found")
+            self.camNotFound_holder = True
+        
+        screen.fill((0,0,0))
+        pygame.display.update()
+
+        if self.camNotFound_holder:
+            self.camNotFoundHandler(screen,frames, x_s, y_s, clock, text, textRect)
 
         # after checking if camera exists, cam is not accepted if /dev/video0 > null
         # Usually null gives a black screen, before initiating the display
         # A black screen is filled 
 
-        if running:
-            screen.fill((0,0,0))
-            pygame.display.update()
 
-        while running:
-            cap = cam.get_image(cap)
-            rect = []
-            self.create_rect(cap, rect)
 
-            #GTK events
-            while Gtk.events_pending():
-                Gtk.main_iteration()
-
-            events = pygame.event.get()
-            self.read_events(events)
-
-    def create_rect(self, cad, rect)
+    def create_rect(self, cad, rect, frames, clock, screen, x_size, y_size):
         for z in range(max(20, int(frames)*10)):
             x = random.random()
             y = random.random()
@@ -169,25 +140,29 @@ class Puntillism():
                 self.radio2 = self.radio2 + 1
             num = random.randrange(self.radio1, self.radio2, 1)
             
-            rect.append(pygame.draw.circle(screen, cad.get_at((int(x * 640), int(y * 480))), (int(x * x_s), int(y * y_s)), num, 0))
+            rect.append(pygame.draw.circle(screen, cad.get_at((int(x * 640), int(y * 480))), (int(x * x_size), int(y * y_size)), num, 0))
         pygame.display.update(rect)
         clock.tick()
         frames = clock.get_fps()
     
-    def read_events(self, events):
+    def read_events(self, events, screen):
         for event in events:
             
             if event.type == pygame.QUIT:
-                camNotFound_holder = False
+                self.running = False
+                self.camNotFound_holder = False
                 
             elif event.type == pygame.VIDEORESIZE:
                 pygame.display.set_mode(event.size, pygame.RESIZABLE)
 
+
             elif event.type == pygame.KEYDOWN:
 
                 if event.key == pygame.K_ESCAPE:
-                    camNotFound_holder = False
 
+                    self.running = False
+                    self.camNotFound_holder = False
+    
                 elif event.key == pygame.K_s:
                     self.parent.save_image(screen)
 
@@ -201,3 +176,33 @@ class Puntillism():
                     if event.action == 'openbutton':
                         self.file_path = self.parent.choose_image_from_journal_cb()
                         screen.fill((0,0,0)) 
+                        pygame.display.update()
+                        self.running = False
+                        self.camNotFound_holder = True
+                        
+
+    def camNotFoundHandler(self, screen, frames, x_s, y_s, clock, text, textRect):
+        while self.camNotFound_holder:
+            
+            if self.file_path != "NULL":
+                    
+                cad = pygame.image.load(self.file_path).convert_alpha()
+                cad = pygame.transform.scale(cad, (640,480))
+                rect = []
+                self.create_rect(cad, rect, frames, clock,screen,x_s, y_s)
+
+            else:
+                screen.fill((0,0,0)) 
+                screen.blit(text, textRect) 
+                pygame.display.update()
+
+            #GTK events
+            while Gtk.events_pending():
+                Gtk.main_iteration()
+
+            events = pygame.event.get()
+            self.read_events(events, screen)
+                        
+                        
+
+                            
