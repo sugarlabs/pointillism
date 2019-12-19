@@ -53,7 +53,7 @@ class Puntillism():
         self.radio2 = 12
 
         # create a local variable to check camera not found and in loop
-        self.camNotFound_holder = False
+        self.load_image_loop = False
 
         screen = pygame.display.get_surface()
         screen.fill((0, 0, 0))
@@ -64,14 +64,14 @@ class Puntillism():
 
         clock = pygame.time.Clock()
         self.running = True
-        self.camfound = False
+        self.has_camera = False
         try:
             cam = camera.Camera("/dev/video0", (640, 480), "RGB")
             cam.start()
-            self.camfound = True
+            self.has_camera = True
         except SystemError:
             self.running = False
-            self.camfound = False
+            self.has_camera = False
 
         try:
             cam.set_controls(hflip=True)
@@ -98,16 +98,16 @@ class Puntillism():
             self.read_events(events, screen)
 
         # define some colors for not cam found
-        green0 = (0, 255, 0)
+        green = (0, 255, 0)
         blue0 = (0, 0, 128)
         font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render(_('Camera not found'), True, green0, blue0)
-        textRect = text.get_rect()
-        textRect.center = (x_s // 2, y_s // 2)
+        text = font.render(_('Camera not found'), True, green, blue0)
+        text_frame = text.get_rect()
+        text_frame.center = (x_s // 2, y_s // 2)
 
-        if not self.camfound:
+        if not self.has_camera:
             print("LOG: No /dev/video0 found")
-            self.camNotFound_holder = True
+            self.load_image_loop = True
 
         # after checking if camera exists, cam is not accepted
         # if /dev/video0 > null ually null gives a black screen,
@@ -115,9 +115,9 @@ class Puntillism():
         screen.fill((0, 0, 0))
         pygame.display.update()
 
-        if self.camNotFound_holder:
-            self.camNotFoundHandler(screen, frames,
-                                    x_s, y_s, clock, text, textRect)
+        if self.load_image_loop:
+            self.image_load_handler(screen, frames,
+                                    x_s, y_s, clock, text, text_frame)
 
     def create_rect(self, cad, rect, frames, clock, screen, x_size, y_size):
         for z in range(max(20, int(frames)*10)):
@@ -144,7 +144,7 @@ class Puntillism():
 
             if event.type == pygame.QUIT:
                 self.running = False
-                self.camNotFound_holder = False
+                self.load_image_loop = False
 
             elif event.type == pygame.VIDEORESIZE:
                 pygame.display.set_mode(event.size, pygame.RESIZABLE)
@@ -153,7 +153,7 @@ class Puntillism():
 
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
-                    self.camNotFound_holder = False
+                    self.load_image_loop = False
 
                 elif event.key == pygame.K_s:
                     self.parent.save_image(screen)
@@ -170,10 +170,10 @@ class Puntillism():
                         screen.fill((0, 0, 0))
                         pygame.display.update()
                         self.running = False
-                        self.camNotFound_holder = True
+                        self.load_image_loop = True
 
-    def camNotFoundHandler(self, screen, frames, x_s, y_s, clock, text, textRect):
-        while self.camNotFound_holder:
+    def image_load_handler(self, screen, frames, x_s, y_s, clock, text, text_frame):
+        while self.load_image_loop:
 
             if self.file_path != "NULL":
                 cad = pygame.image.load(self.file_path).convert_alpha()
@@ -183,7 +183,7 @@ class Puntillism():
 
             else:
                 screen.fill((0, 0, 0))
-                screen.blit(text, textRect)
+                screen.blit(text, text_frame)
                 pygame.display.update()
 
             # GTK events
