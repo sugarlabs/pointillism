@@ -110,10 +110,6 @@ class Activity(activity.Activity):
         self.cradio2_handler = self.cradio2.connect('notify::value', self.cradio2_valor)
         item4.add(self.cradio2)
         barra.insert(item4, 5)
-
-
-        
-
         separator1 = Gtk.SeparatorToolItem()
         separator1.props.draw = True
         separator1.set_expand(False)
@@ -142,7 +138,6 @@ class Activity(activity.Activity):
         stop_button.show()
 
         self.set_toolbar_box(toolbar_box)
-
         toolbar_box.show_all()
 
     def cradio1_valor(self, radio, value):
@@ -156,7 +151,6 @@ class Activity(activity.Activity):
     def _savebutton_cb(self,button):
         pygame.event.post(pygame.event.Event(pygame.USEREVENT, action='savebutton'))
     
-
     def save_image(self,image):
         journalobj = datastore.create()
         journalobj.metadata['title'] = _('Pointillism')
@@ -167,7 +161,6 @@ class Activity(activity.Activity):
         pygame.image.save(image,file_path)
         journalobj.set_file_path(file_path)
         datastore.write(journalobj)
-
         journalobj.destroy()
     
     def open_image(self,button):
@@ -176,7 +169,6 @@ class Activity(activity.Activity):
     def choose_image_from_journal_cb(self):
         
         ''' Create a chooser for image objects '''
-
         self.image_id = None
         chooser = ObjectChooser(what_filter=mime.GENERIC_TYPE_IMAGE)
         result = chooser.run()
