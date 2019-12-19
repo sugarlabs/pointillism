@@ -31,6 +31,7 @@ try:
     from pygame import camera
 except (ImportError, ModuleNotFoundError):
     print('Error in import Pygame. This activity requires Pygame 1.9')
+from gettext import gettext as _
 
 
 class Puntillism():
@@ -100,7 +101,7 @@ class Puntillism():
         green0 = (0, 255, 0)
         blue0 = (0, 0, 128)
         font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render('Camera not found', True, green0, blue0)
+        text = font.render(_('Camera not found'), True, green0, blue0)
         textRect = text.get_rect()
         textRect.center = (x_s // 2, y_s // 2)
 
