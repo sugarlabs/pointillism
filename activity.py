@@ -156,7 +156,7 @@ class Activity(activity.Activity):
 
     def save_image(self, image):
         journalobj = datastore.create()
-        journalobj.metadata['title'] = ('Pointillism')
+        journalobj.metadata['title'] = _('Pointillism')
         journalobj.metadata['mime_type'] = 'image/jpeg'
 
         file_path = os.path.join(os.environ['SUGAR_ACTIVITY_ROOT'], 'data', 'pointillism.jpg')
