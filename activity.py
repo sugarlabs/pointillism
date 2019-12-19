@@ -43,6 +43,7 @@ from gettext import gettext as _
 
 import puntillism
 
+
 class Activity(activity.Activity):
 
     def __init__(self, handle):
@@ -91,7 +92,8 @@ class Activity(activity.Activity):
         self.cradio1.set_range(1, 20)
         self.cradio1.set_increments(1, 2)
         self.cradio1.props.value = self.radio_uno
-        self.cradio1_handler = self.cradio1.connect('notify::value', self.cradio1_valor)
+        self.cradio1_handler = self.cradio1.connect(
+            'notify::value', self.cradio1_valor)
         item2.add(self.cradio1)
         barra.insert(item2, 3)
 
@@ -107,13 +109,14 @@ class Activity(activity.Activity):
         self.cradio2.set_range(1, 20)
         self.cradio2.set_increments(1, 2)
         self.cradio2.props.value = self.radio_dos
-        self.cradio2_handler = self.cradio2.connect('notify::value', self.cradio2_valor)
+        self.cradio2_handler = self.cradio2.connect(
+            'notify::value', self.cradio2_valor)
         item4.add(self.cradio2)
         barra.insert(item4, 5)
         separator1 = Gtk.SeparatorToolItem()
         separator1.props.draw = True
         separator1.set_expand(False)
-        barra.insert(separator1,6)
+        barra.insert(separator1, 6)
 
         save_button = ToolButton('filesave')
         save_button.set_tooltip(_('Save Image'))
@@ -130,7 +133,7 @@ class Activity(activity.Activity):
         separator2 = Gtk.SeparatorToolItem()
         separator2.props.draw = False
         separator2.set_expand(True)
-        barra.insert(separator2,9)
+        barra.insert(separator2, 9)
 
         stop_button = StopButton(self)
         stop_button.props.accelerator = '<Ctrl>q'
@@ -148,12 +151,12 @@ class Activity(activity.Activity):
         self.radio_dos = int(radio.props.value)
         self.actividad.poner_radio2(self.radio_dos)
 
-    def _savebutton_cb(self,button):
+    def _savebutton_cb(self, button):
         pygame.event.post(pygame.event.Event(pygame.USEREVENT, action='savebutton'))
-    
-    def save_image(self,image):
+
+    def save_image(self, image):
         journalobj = datastore.create()
-        journalobj.metadata['title'] = _('Pointillism')
+        journalobj.metadata['title'] = ('Pointillism')
         journalobj.metadata['mime_type'] = 'image/jpeg'
 
         file_path = os.path.join(os.environ['SUGAR_ACTIVITY_ROOT'], 'data', 'pointillism.jpg')
@@ -162,12 +165,12 @@ class Activity(activity.Activity):
         journalobj.set_file_path(file_path)
         datastore.write(journalobj)
         journalobj.destroy()
-    
-    def open_image(self,button):
+
+    def open_image(self, button):
         pygame.event.post(pygame.event.Event(pygame.USEREVENT, action='openbutton'))
 
     def choose_image_from_journal_cb(self):
-        
+
         ''' Create a chooser for image objects '''
         self.image_id = None
         chooser = ObjectChooser(what_filter=mime.GENERIC_TYPE_IMAGE)
