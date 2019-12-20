@@ -22,6 +22,7 @@
 # Alan Aguiar <alanjas@gmail.com>
 # Nirav Patel <sugarlabs@spongezone.net>
 
+import sys
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -117,6 +118,14 @@ class Puntillism():
             self.image_load_handler(screen, frames,
                                     x_s, y_s, clock, text, text_frame)
 
+        # Destroy image load events
+        try:
+            self.parent.jobject.destroy()
+            self.parent.chooser.destroy()
+        except Exception as e:
+            print("ERROR {}".format(e))
+            pass
+
     def create_rect(self, cad, rect, frames, clock, screen, x_size, y_size):
         for z in range(max(20, int(frames)*10)):
             x = random.random()
@@ -133,6 +142,7 @@ class Puntillism():
                 cad.get_at((int(x * 640), int(y * 480))),
                 (int(x * x_size), int(y * y_size)),
                 num, 0))
+        pygame.display.update()
         pygame.display.update(rect)
         clock.tick()
         frames = clock.get_fps()
@@ -152,7 +162,7 @@ class Puntillism():
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
                     self.load_image_loop = False
-
+                    
                 elif event.key == pygame.K_s:
                     self.parent.save_image(screen)
 
@@ -183,10 +193,14 @@ class Puntillism():
                             self.running = True
 
     def image_load_handler(self, screen, frames, x_s, y_s, clock, text, text_frame):
+        screen.fill((0, 0, 0))
+        pygame.display.update()
+
         while self.load_image_loop:
 
-            if self.file_path != "NULL":
-                cad = pygame.image.load(self.file_path).convert_alpha()
+            if self.file_path is not None:
+
+                cad = pygame.image.load(self.file_path).convert()
                 cad = pygame.transform.scale(cad, (640, 480))
                 rect = []
                 self.create_rect(cad, rect, frames, clock, screen, x_s, y_s)

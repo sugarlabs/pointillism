@@ -172,16 +172,17 @@ class Activity(activity.Activity):
     def choose_image_from_journal_cb(self):
         ''' Create a chooser for image objects '''
         self.image_id = None
-        chooser = ObjectChooser(what_filter=mime.GENERIC_TYPE_IMAGE)
-        result = chooser.run()
+        self.chooser = ObjectChooser(what_filter=mime.GENERIC_TYPE_IMAGE)
+        result = self.chooser.run()
         if result == Gtk.ResponseType.ACCEPT:
-            jobject = chooser.get_selected_object()
-            self.image_id = str(jobject._object_id)
-            self.image_file_path = str(jobject.get_file_path())
-            puntillism.Puntillism.file_path = self.image_file_path
-            jobject.destroy()
-            chooser.destroy()
-            return self.image_file_path
+            self.jobject = self.chooser.get_selected_object()
+            self.image_id = str(self.jobject._object_id)
+            return str(self.jobject.get_file_path())
+        else:
+            self.jobject.destroy()
+            self.chooser.destroy()
+            return None
+
 
     def get_preview(self):
         return self._pygamecanvas.get_preview()
