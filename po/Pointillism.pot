@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-19 18:07+0300\n"
+"POT-Creation-Date: 2019-12-20 21:04+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: activity/activity.info:2
+#: activity/activity.info:2 activity.py:159
 msgid "Pointillism"
 msgstr ""
 
@@ -41,6 +41,10 @@ msgstr ""
 msgid "Open Image"
 msgstr ""
 
-#: puntillism.py:104
+#: puntillism.py:103
 msgid "Camera not found"
+msgstr ""
+
+#: puntillism.py:203
+msgid "Click the Load Image Button"
 msgstr ""
