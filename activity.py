@@ -170,7 +170,6 @@ class Activity(activity.Activity):
         pygame.event.post(pygame.event.Event(pygame.USEREVENT, action='openbutton'))
 
     def choose_image_from_journal_cb(self):
-
         ''' Create a chooser for image objects '''
         self.image_id = None
         chooser = ObjectChooser(what_filter=mime.GENERIC_TYPE_IMAGE)
@@ -178,12 +177,11 @@ class Activity(activity.Activity):
         if result == Gtk.ResponseType.ACCEPT:
             jobject = chooser.get_selected_object()
             self.image_id = str(jobject._object_id)
-        try:
-            print(str(jobject.get_file_path()))
-            puntillism.Puntillism.file_path = str(jobject.get_file_path())
-            return str(jobject.get_file_path())
-        except (UnboundLocalError, NameError):
-            return None
+            self.image_file_path = str(jobject.get_file_path())
+            puntillism.Puntillism.file_path = self.image_file_path
+            jobject.destroy()
+            chooser.destroy()
+            return self.image_file_path
 
     def get_preview(self):
         return self._pygamecanvas.get_preview()
