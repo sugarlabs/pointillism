@@ -178,9 +178,12 @@ class Activity(activity.Activity):
         if result == Gtk.ResponseType.ACCEPT:
             jobject = chooser.get_selected_object()
             self.image_id = str(jobject._object_id)
-        print(str(jobject.get_file_path()))
-        puntillism.Puntillism.file_path = str(jobject.get_file_path())
-        return str(jobject.get_file_path())
+        try:
+            print(str(jobject.get_file_path()))
+            puntillism.Puntillism.file_path = str(jobject.get_file_path())
+            return str(jobject.get_file_path())
+        except (UnboundLocalError, NameError):
+            return None
 
     def get_preview(self):
         return self._pygamecanvas.get_preview()

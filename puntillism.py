@@ -166,11 +166,22 @@ class Puntillism():
                         self.parent.save_image(screen)
 
                     if event.action == 'openbutton':
-                        self.file_path = self.parent.choose_image_from_journal_cb()
-                        screen.fill((0, 0, 0))
-                        pygame.display.update()
-                        self.running = False
-                        self.load_image_loop = True
+                        try:
+                            self.file_path = self.parent.choose_image_from_journal_cb()
+                            if self.file_path is not None:
+                                screen.fill((0, 0, 0))
+                                pygame.display.update()
+                                self.running = False
+                                self.load_image_loop = True
+                            else:
+                                # The jobject either didn't return anything
+                                # Some error might have happened, while selecting the image
+                                # Just leave it with the current view, if nothings gone wrong
+                                pass
+
+                        except Exception as e:
+                            print("warning : ", e)
+                            self.running = True
 
     def image_load_handler(self, screen, frames, x_s, y_s, clock, text, text_frame):
         while self.load_image_loop:
