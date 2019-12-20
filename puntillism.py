@@ -100,9 +100,8 @@ class Puntillism():
 
         # define some colors for not cam found
         font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render(_('Camera not found'), True, (255, 255, 255), (0, 0, 0))
-        text_frame = text.get_rect()
-        text_frame.center = (x_s // 2, y_s // 2)
+        message = _('Camera not found')
+
 
         if not self.has_camera:
             print("LOG: No /dev/video0 found")
@@ -116,7 +115,7 @@ class Puntillism():
 
         if self.load_image_loop:
             self.image_load_handler(screen, frames,
-                                    x_s, y_s, clock, text, text_frame)
+                                    x_s, y_s, clock, message, font)
 
         # Destroy image load events
         try:
@@ -162,7 +161,7 @@ class Puntillism():
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
                     self.load_image_loop = False
-                    
+
                 elif event.key == pygame.K_s:
                     self.parent.save_image(screen)
 
@@ -192,14 +191,22 @@ class Puntillism():
                             print("warning : ", e)
                             self.running = True
 
-    def image_load_handler(self, screen, frames, x_s, y_s, clock, text, text_frame):
+    def image_load_handler(self, screen, frames, x_s, y_s, clock, message, font):
         screen.fill((0, 0, 0))
         pygame.display.update()
+
+        if not self.has_camera:
+            text = font.render(message, True, (255, 255, 255), (0, 0, 0))
+            text_frame = text.get_rect()
+            text_frame.center = (x_s // 2, y_s // 2)
+        else:
+            text = font.render(_("Click the Load Image Button"), True, (255, 255, 255), (0, 0, 0))
+            text_frame = text.get_rect()
+            text_frame.center = (x_s // 2, y_s // 2)
 
         while self.load_image_loop:
 
             if self.file_path is not None:
-
                 cad = pygame.image.load(self.file_path).convert()
                 cad = pygame.transform.scale(cad, (640, 480))
                 rect = []
