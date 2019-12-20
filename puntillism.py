@@ -98,10 +98,8 @@ class Puntillism():
             self.read_events(events, screen)
 
         # define some colors for not cam found
-        green = (0, 255, 0)
-        blue0 = (0, 0, 128)
         font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render(_('Camera not found'), True, green, blue0)
+        text = font.render(_('Camera not found'), True, (255, 255, 255), (0, 0, 0))
         text_frame = text.get_rect()
         text_frame.center = (x_s // 2, y_s // 2)
 
@@ -177,6 +175,7 @@ class Puntillism():
                                 # The jobject either didn't return anything
                                 # Some error might have happened, while selecting the image
                                 # Just leave it with the current view, if nothings gone wrong
+                                pygame.display.update()
                                 pass
 
                         except Exception as e:
