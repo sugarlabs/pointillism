@@ -50,7 +50,7 @@ class Activity(activity.Activity):
         activity.Activity.__init__(self, handle)
 
         self.max_participants = 1
-
+        self.file_path_temp = None
         self.radio_uno = 2
         self.radio_dos = 12
 
@@ -172,14 +172,29 @@ class Activity(activity.Activity):
     def choose_image_from_journal_cb(self):
         ''' Create a chooser for image objects '''
         self.image_id = None
-        self.chooser = ObjectChooser(what_filter=mime.GENERIC_TYPE_IMAGE)
-        result = self.chooser.run()
-        if result == Gtk.ResponseType.ACCEPT:
-            self.jobject = self.chooser.get_selected_object()
-            self.image_id = str(self.jobject._object_id)
-            return str(self.jobject.get_file_path())
-        else:
-            return None
+        ##
+        self.chooser = None
+        try:
+            self.chooser = ObjectChooser(parent=self, what_filter=mime.GENERIC_TYPE_IMAGE)
+        except TypeError:
+            self.chooser = ObjectChooser(
+                None, self,
+                Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT)
+        if self.chooser is not None:
+            try:
+                result = self.chooser.run()
+                if result == Gtk.ResponseType.ACCEPT:
+                    dsobject = self.chooser.get_selected_object()
+                    self.file_path_temp = str(dsobject.get_file_path())[:]
+
+            finally:
+                self.chooser.destroy()
+                del self.chooser
+                return self.file_path_temp
+
+    def return_image_to_pygame(self):
+        self.file_path_temp = self.choose_image_from_journal_cb()
+        return self.file_path_temp
 
 
     def get_preview(self):

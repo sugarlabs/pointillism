@@ -120,13 +120,6 @@ class Puntillism():
             self.image_load_handler(screen, frames,
                                     x_s, y_s, clock, message, font)
 
-        # Destroy image load events
-        try:
-            self.parent.jobject.destroy()
-            self.parent.chooser.destroy()
-        except Exception as e:
-            print("Warning : Tried to destroy ObjectChoser and jobject ::  {}".format(e))
-            pass
 
     def create_rect(self, cad, rect, frames, clock, screen, x_size, y_size):
         for z in range(max(20, int(frames)*10)):
@@ -187,23 +180,19 @@ class Puntillism():
                         pygame.display.update()
 
                         # Get Image file Path from ObjectChooser
-                        try:
-                            self.file_path = self.parent.choose_image_from_journal_cb()
-                            if self.file_path is not None:
-                                screen.fill((0, 0, 0))
-                                pygame.display.update()
-                                self.running = False
-                                self.load_image_loop = True
-                            else:
-                                # The jobject either didn't return anything
-                                # Some error might have happened, while selecting the image
-                                # Just leave it with the current view, if nothings gone wrong
-                                pygame.display.update()
-                                pass
+                        self.file_path = self.parent.return_image_to_pygame()
+                        if self.file_path is not None:
+                            screen.fill((0, 0, 0))
+                            pygame.display.update()
+                            self.running = False
+                            self.load_image_loop = True
+                        else:
+                            # The jobject either didn't return anything
+                            # Some error might have happened, while selecting the image
+                            # Just leave it with the current view, if nothings gone wrong
+                            pygame.display.update()
+                            pass
 
-                        except Exception as e:
-                            print("warning : ", e)
-                            self.running = True
 
     def image_load_handler(self, screen, frames, x_s, y_s, clock, message, font):
         screen.fill((0, 0, 0))
