@@ -206,7 +206,7 @@ class Puntillism():
 
         while self.load_image_loop:
 
-            if self.file_path is not None:
+            if (self.file_path is not None) and (self.file_path != "NULL"):
                 cad = pygame.image.load(self.file_path).convert()
                 cad = pygame.transform.scale(cad, (640, 480))
                 rect = []
