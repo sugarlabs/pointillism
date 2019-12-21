@@ -179,8 +179,6 @@ class Activity(activity.Activity):
             self.image_id = str(self.jobject._object_id)
             return str(self.jobject.get_file_path())
         else:
-            self.jobject.destroy()
-            self.chooser.destroy()
             return None
 
 

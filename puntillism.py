@@ -56,6 +56,9 @@ class Puntillism():
         # create a local variable to check camera not found and in loop
         self.load_image_loop = False
 
+        # Declare a font
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        
         screen = pygame.display.get_surface()
         screen.fill((0, 0, 0))
         pygame.display.flip()
@@ -96,10 +99,10 @@ class Puntillism():
                 Gtk.main_iteration()
 
             events = pygame.event.get()
-            self.read_events(events, screen)
+            self.read_events(events, screen, font, x_s, y_s)
 
         # define some colors for not cam found
-        font = pygame.font.Font('freesansbold.ttf', 32)
+        
         message = _('Camera not found')
 
 
@@ -146,7 +149,7 @@ class Puntillism():
         clock.tick()
         frames = clock.get_fps()
 
-    def read_events(self, events, screen):
+    def read_events(self, events, screen, font, x_s, y_s):
         for event in events:
 
             if event.type == pygame.QUIT:
@@ -173,6 +176,17 @@ class Puntillism():
                         self.parent.save_image(screen)
 
                     if event.action == 'openbutton':
+
+                        # ObjectChooser might take a few seconds to load
+                        # A text message might be needed to reflect the loading ObjectChooser
+                        text = font.render(_("Loading Image Selector..."), True, (255, 255, 255), (0, 0, 0))
+                        text_frame = text.get_rect()
+                        screen.fill((0, 0, 0))
+                        screen.blit(text, text_frame)
+                        text_frame.center = (x_s // 2, y_s // 2)
+                        pygame.display.update()
+
+                        # Get Image file Path from ObjectChooser
                         try:
                             self.file_path = self.parent.choose_image_from_journal_cb()
                             if self.file_path is not None:
@@ -222,4 +236,4 @@ class Puntillism():
                 Gtk.main_iteration()
 
             events = pygame.event.get()
-            self.read_events(events, screen)
+            self.read_events(events, screen, font, x_s, y_s)
