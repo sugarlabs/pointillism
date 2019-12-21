@@ -122,7 +122,7 @@ class Puntillism():
             self.parent.jobject.destroy()
             self.parent.chooser.destroy()
         except Exception as e:
-            print("ERROR {}".format(e))
+            print("Warning : Tried to destroy ObjectChoser and jobject ::  {}".format(e))
             pass
 
     def create_rect(self, cad, rect, frames, clock, screen, x_size, y_size):
