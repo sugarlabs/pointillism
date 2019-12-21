@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-20 21:04+0300\n"
+"POT-Creation-Date: 2019-12-21 20:12+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,10 +41,14 @@ msgstr ""
 msgid "Open Image"
 msgstr ""
 
-#: puntillism.py:103
+#: puntillism.py:106
 msgid "Camera not found"
 msgstr ""
 
-#: puntillism.py:203
+#: puntillism.py:175
+msgid "Loading Image Selector..."
+msgstr ""
+
+#: puntillism.py:206
 msgid "Click the Load Image Button"
 msgstr ""
