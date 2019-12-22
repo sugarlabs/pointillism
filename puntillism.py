@@ -22,23 +22,23 @@
 # Alan Aguiar <alanjas@gmail.com>
 # Nirav Patel <sugarlabs@spongezone.net>
 
-import os
-import sys
+from gettext import gettext as _
+import random
+from gi.repository import Gtk
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
-import random
 try:
     import pygame
     from pygame import camera
 except (ImportError, ModuleNotFoundError):
     print('Error in import Pygame. This activity requires Pygame 1.9')
 
+
 class Puntillism():
 
     def __init__(self, parent):
         self.parent = parent
-        #logging.basicConfig()
+        self.file_path = "NULL"
 
     def poner_radio1(self, radio):
         self.radio1 = radio
@@ -47,25 +47,35 @@ class Puntillism():
         self.radio2 = radio
 
     def run(self):
-        #size = (1200,900)
         pygame.init()
         pygame.camera.init()
-        #camera.init()
-
         self.radio1 = 2
         self.radio2 = 12
 
+        # create a local variable to check camera not found and in loop
+        self.load_image_loop = False
+
+        # Declare a font
+        font = pygame.font.Font('freesansbold.ttf', 32)
+
         screen = pygame.display.get_surface()
-        screen.fill((0,0,0))
+        screen.fill((0, 0, 0))
         pygame.display.flip()
 
         x_s, y_s = (1200, 900)
         x_s, y_s = screen.get_size()
 
         clock = pygame.time.Clock()
+        self.running = True
+        self.has_camera = False
+        try:
+            cam = camera.Camera("/dev/video0", (640, 480), "RGB")
+            cam.start()
+            self.has_camera = True
+        except SystemError:
+            self.running = False
+            self.has_camera = False
 
-        cam = camera.Camera("/dev/video0", (640, 480), "RGB")
-        cam.start()
         try:
             cam.set_controls(hflip=True)
         except SystemError:
@@ -73,47 +83,149 @@ class Puntillism():
 
         cap = pygame.surface.Surface((640, 480), 0, screen)
         frames = 0
-        running = True
-        while running:
+
+        if self.running:
+            screen.fill((0, 0, 0))
+            pygame.display.update()
+
+        while self.running:
             cap = cam.get_image(cap)
             rect = []
-            for z in range(max(20, int(frames)*10)):
-                x = random.random()
-                y = random.random()
-                if self.radio1 > self.radio2:
-                    aux = self.radio2
-                    self.radio2 = self.radio1
-                    self.radio1 = aux
-                elif self.radio1 == self.radio2:
-                    self.radio2 = self.radio2 + 1
-                num = random.randrange(self.radio1, self.radio2, 1)
-                rect.append(pygame.draw.circle(screen, cap.get_at((int(x * 640), int(y * 480))), (int(x * x_s), int(y * y_s)), num, 0))
-            pygame.display.update(rect)
+            self.create_rect(cap, rect, frames, clock, screen, x_s, y_s)
 
-            clock.tick()
-            frames = clock.get_fps()
-
-            #GTK events
+            # GTK events
             while Gtk.events_pending():
                 Gtk.main_iteration()
 
             events = pygame.event.get()
-            for event in events:
-                #log.debug( "Event: %s", event )
-                if event.type == pygame.QUIT:
-                    cam.stop()
-                    running = False
-                elif event.type == pygame.VIDEORESIZE:
-                    pygame.display.set_mode(event.size, pygame.RESIZABLE)
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        cam.stop()
-                        running = False
-                    elif event.key == pygame.K_s:
-                        self.parent.save_image(screen)
-                elif event.type == pygame.USEREVENT:
-                    if hasattr(event,'action'):
-                        if event.action == 'savebutton':
-                            self.parent.save_image(screen)
-            #pygame.display.flip()
+            self.read_events(events, screen, font, x_s, y_s)
 
+        # define some colors for not cam found
+
+        message = _('Camera not found')
+
+        if not self.has_camera:
+            print("LOG: No /dev/video0 found")
+            self.load_image_loop = True
+
+        # after checking if camera exists, cam is not accepted
+        # if /dev/video0 > null ually null gives a black screen,
+        # before initiating the display, A black screen is filled
+        screen.fill((0, 0, 0))
+        pygame.display.update()
+
+        if self.load_image_loop:
+            self.image_load_handler(screen, frames,
+                                    x_s, y_s, clock, message, font)
+
+    def create_rect(self, cad, rect, frames, clock, screen, x_size, y_size):
+        for z in range(max(20, int(frames)*10)):
+            x = random.random()
+            y = random.random()
+            if self.radio1 > self.radio2:
+                aux = self.radio2
+                self.radio2 = self.radio1
+                self.radio1 = aux
+            elif self.radio1 == self.radio2:
+                self.radio2 = self.radio2 + 1
+            num = random.randrange(self.radio1, self.radio2, 1)
+            rect.append(pygame.draw.circle(
+                screen,
+                cad.get_at((int(x * 640), int(y * 480))),
+                (int(x * x_size), int(y * y_size)),
+                num, 0))
+        pygame.display.update()
+        pygame.display.update(rect)
+        clock.tick()
+        frames = clock.get_fps()
+
+    def read_events(self, events, screen, font, x_s, y_s):
+        for event in events:
+
+            if event.type == pygame.QUIT:
+                self.running = False
+                self.load_image_loop = False
+
+            elif event.type == pygame.VIDEORESIZE:
+                pygame.display.set_mode(event.size, pygame.RESIZABLE)
+
+            elif event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_ESCAPE:
+                    self.running = False
+                    self.load_image_loop = False
+
+                elif event.key == pygame.K_s:
+                    self.parent.save_image(screen)
+
+            elif event.type == pygame.USEREVENT:
+
+                if hasattr(event, 'action'):
+
+                    if event.action == 'savebutton':
+                        self.parent.save_image(screen)
+
+                    if event.action == 'openbutton':
+
+                        # ObjectChooser might take a few seconds to load
+                        # A text message might be needed to reflect
+                        # the loading ObjectChooser
+                        text = font.render(
+                            ("Loading Image Selector..."),
+                            True, (255, 255, 255), (0, 0, 0))
+                        text_frame = text.get_rect()
+                        screen.fill((0, 0, 0))
+                        screen.blit(text, text_frame)
+                        text_frame.center = (x_s // 2, y_s // 2)
+                        pygame.display.update()
+
+                        # Get Image file Path from ObjectChooser
+                        self.file_path = self.parent.return_image_to_pygame()
+                        if self.file_path is not None:
+                            screen.fill((0, 0, 0))
+                            pygame.display.update()
+                            self.running = False
+                            self.load_image_loop = True
+                        else:
+                            # The jobject either didn't return anything
+                            # Some error might have happened,
+                            # while selecting the image
+                            # Just leave it with the current view,
+                            # if nothings gone wrong
+                            pygame.display.update()
+                            pass
+
+    def image_load_handler(
+            self, screen, frames, x_s, y_s, clock, message, font):
+        screen.fill((0, 0, 0))
+        pygame.display.update()
+
+        if not self.has_camera:
+            text = font.render(message, True, (255, 255, 255), (0, 0, 0))
+            text_frame = text.get_rect()
+            text_frame.center = (x_s // 2, y_s // 2)
+        else:
+            text = font.render(_("Click the Load Image Button"),
+                               True, (255, 255, 255), (0, 0, 0))
+            text_frame = text.get_rect()
+            text_frame.center = (x_s // 2, y_s // 2)
+
+        while self.load_image_loop:
+
+            if (self.file_path is not None) and (self.file_path != "NULL"):
+                cad = pygame.image.load(self.file_path).convert()
+                cad = pygame.transform.scale(cad, (640, 480))
+                rect = []
+                self.create_rect(cad, rect, frames, clock, screen, x_s, y_s)
+
+            else:
+                screen.fill((0, 0, 0))
+                screen.blit(text, text_frame)
+                pygame.display.update()
+
+            # GTK events
+            while Gtk.events_pending():
+                Gtk.main_iteration()
+
+            events = pygame.event.get()
+            self.read_events(events, screen, font, x_s, y_s)

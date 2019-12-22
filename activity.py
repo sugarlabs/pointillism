@@ -22,24 +22,26 @@
 # Alan Aguiar <alanjas@gmail.com>
 # Nirav Patel <sugarlabs@spongezone.net>
 
+import puntillism
+from gettext import gettext as _
+from sugar3.datastore import datastore
+from sugar3.graphics.objectchooser import ObjectChooser
+from sugar3.graphics.toolbutton import ToolButton
+from sugar3.activity.widgets import StopButton
+from sugar3.activity.widgets import ActivityToolbarButton
+from sugar3.graphics.toolbarbox import ToolbarBox
+from sugar3.activity import activity
+from sugar3 import mime
+import sugargame.canvas
+import sugargame
+import pygame
+from gi.repository import Gtk
+from gi.repository import Gdk
 import os
 import gi
 gi.require_version('Gdk', '3.0')
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gdk
-from gi.repository import Gtk
-import pygame
-import sugargame
-import sugargame.canvas
-from sugar3.activity import activity
-from sugar3.graphics.toolbarbox import ToolbarBox
-from sugar3.activity.widgets import ActivityToolbarButton
-from sugar3.activity.widgets import StopButton
-from sugar3.graphics.toolbutton import ToolButton
-from sugar3.datastore import datastore
-from gettext import gettext as _
 
-import puntillism
 
 class Activity(activity.Activity):
 
@@ -47,7 +49,7 @@ class Activity(activity.Activity):
         activity.Activity.__init__(self, handle)
 
         self.max_participants = 1
-
+        self.file_path_temp = None
         self.radio_uno = 2
         self.radio_dos = 12
 
@@ -55,9 +57,11 @@ class Activity(activity.Activity):
 
         self.build_toolbar()
 
-        self._pygamecanvas = sugargame.canvas.PygameCanvas(self,
-            main=self.actividad.run,
-            modules=[pygame.display])
+        self._pygamecanvas = \
+            sugargame.canvas.PygameCanvas(
+                self,
+                main=self.actividad.run,
+                modules=[pygame.display])
 
         self.set_canvas(self._pygamecanvas)
         self._pygamecanvas.grab_focus()
@@ -89,7 +93,8 @@ class Activity(activity.Activity):
         self.cradio1.set_range(1, 20)
         self.cradio1.set_increments(1, 2)
         self.cradio1.props.value = self.radio_uno
-        self.cradio1_handler = self.cradio1.connect('notify::value', self.cradio1_valor)
+        self.cradio1_handler = self.cradio1.connect(
+            'notify::value', self.cradio1_valor)
         item2.add(self.cradio1)
         barra.insert(item2, 3)
 
@@ -105,14 +110,14 @@ class Activity(activity.Activity):
         self.cradio2.set_range(1, 20)
         self.cradio2.set_increments(1, 2)
         self.cradio2.props.value = self.radio_dos
-        self.cradio2_handler = self.cradio2.connect('notify::value', self.cradio2_valor)
+        self.cradio2_handler = self.cradio2.connect(
+            'notify::value', self.cradio2_valor)
         item4.add(self.cradio2)
         barra.insert(item4, 5)
-
         separator1 = Gtk.SeparatorToolItem()
         separator1.props.draw = True
         separator1.set_expand(False)
-        barra.insert(separator1,6)
+        barra.insert(separator1, 6)
 
         save_button = ToolButton('filesave')
         save_button.set_tooltip(_('Save Image'))
@@ -120,18 +125,23 @@ class Activity(activity.Activity):
         barra.insert(save_button, 7)
         save_button.show()
 
+        open_button = ToolButton('fileopen')
+        open_button.set_tooltip(_('Open Image'))
+        open_button.connect('clicked', self.open_image)
+        barra.insert(open_button, 8)
+        open_button.show()
+
         separator2 = Gtk.SeparatorToolItem()
         separator2.props.draw = False
         separator2.set_expand(True)
-        barra.insert(separator2,8)
+        barra.insert(separator2, 9)
 
         stop_button = StopButton(self)
         stop_button.props.accelerator = '<Ctrl>q'
-        barra.insert(stop_button, 9)
+        barra.insert(stop_button, 10)
         stop_button.show()
 
         self.set_toolbar_box(toolbar_box)
-
         toolbar_box.show_all()
 
     def cradio1_valor(self, radio, value):
@@ -142,21 +152,54 @@ class Activity(activity.Activity):
         self.radio_dos = int(radio.props.value)
         self.actividad.poner_radio2(self.radio_dos)
 
-    def _savebutton_cb(self,button):
-        pygame.event.post(pygame.event.Event(pygame.USEREVENT, action='savebutton'))
+    def _savebutton_cb(self, button):
+        pygame.event.post(pygame.event.Event(
+            pygame.USEREVENT, action='savebutton'))
 
-    def save_image(self,image):
+    def save_image(self, image):
         journalobj = datastore.create()
         journalobj.metadata['title'] = _('Pointillism')
         journalobj.metadata['mime_type'] = 'image/jpeg'
 
-        file_path = os.path.join(os.environ['SUGAR_ACTIVITY_ROOT'], 'data', 'pointillism.jpg')
+        file_path = os.path.join(
+            os.environ['SUGAR_ACTIVITY_ROOT'], 'data', 'pointillism.jpg')
 
-        pygame.image.save(image,file_path)
+        pygame.image.save(image, file_path)
         journalobj.set_file_path(file_path)
         datastore.write(journalobj)
-
         journalobj.destroy()
+
+    def open_image(self, button):
+        pygame.event.post(pygame.event.Event(
+            pygame.USEREVENT, action='openbutton'))
+
+    def choose_image_from_journal_cb(self):
+        ''' Create a chooser for image objects '''
+        self.image_id = None
+        ##
+        self.chooser = None
+        try:
+            self.chooser = ObjectChooser(
+                parent=self, what_filter=mime.GENERIC_TYPE_IMAGE)
+        except TypeError:
+            self.chooser = ObjectChooser(
+                None, self,
+                Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT)
+        if self.chooser is not None:
+            try:
+                result = self.chooser.run()
+                if result == Gtk.ResponseType.ACCEPT:
+                    dsobject = self.chooser.get_selected_object()
+                    self.file_path_temp = str(dsobject.get_file_path())[:]
+
+            finally:
+                self.chooser.destroy()
+                del self.chooser
+                return self.file_path_temp
+
+    def return_image_to_pygame(self):
+        self.file_path_temp = self.choose_image_from_journal_cb()
+        return self.file_path_temp
 
     def get_preview(self):
         return self._pygamecanvas.get_preview()
