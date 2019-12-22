@@ -22,17 +22,16 @@
 # Alan Aguiar <alanjas@gmail.com>
 # Nirav Patel <sugarlabs@spongezone.net>
 
-import sys
+from gettext import gettext as _
+import random
+from gi.repository import Gtk
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
-import random
 try:
     import pygame
     from pygame import camera
 except (ImportError, ModuleNotFoundError):
     print('Error in import Pygame. This activity requires Pygame 1.9')
-from gettext import gettext as _
 
 
 class Puntillism():
@@ -58,7 +57,7 @@ class Puntillism():
 
         # Declare a font
         font = pygame.font.Font('freesansbold.ttf', 32)
-        
+
         screen = pygame.display.get_surface()
         screen.fill((0, 0, 0))
         pygame.display.flip()
@@ -102,9 +101,8 @@ class Puntillism():
             self.read_events(events, screen, font, x_s, y_s)
 
         # define some colors for not cam found
-        
-        message = _('Camera not found')
 
+        message = _('Camera not found')
 
         if not self.has_camera:
             print("LOG: No /dev/video0 found")
@@ -119,7 +117,6 @@ class Puntillism():
         if self.load_image_loop:
             self.image_load_handler(screen, frames,
                                     x_s, y_s, clock, message, font)
-
 
     def create_rect(self, cad, rect, frames, clock, screen, x_size, y_size):
         for z in range(max(20, int(frames)*10)):
@@ -171,8 +168,11 @@ class Puntillism():
                     if event.action == 'openbutton':
 
                         # ObjectChooser might take a few seconds to load
-                        # A text message might be needed to reflect the loading ObjectChooser
-                        text = font.render(_("Loading Image Selector..."), True, (255, 255, 255), (0, 0, 0))
+                        # A text message might be needed to reflect
+                        # the loading ObjectChooser
+                        text = font.render(
+                            ("Loading Image Selector..."),
+                            True, (255, 255, 255), (0, 0, 0))
                         text_frame = text.get_rect()
                         screen.fill((0, 0, 0))
                         screen.blit(text, text_frame)
@@ -188,13 +188,15 @@ class Puntillism():
                             self.load_image_loop = True
                         else:
                             # The jobject either didn't return anything
-                            # Some error might have happened, while selecting the image
-                            # Just leave it with the current view, if nothings gone wrong
+                            # Some error might have happened,
+                            # while selecting the image
+                            # Just leave it with the current view,
+                            # if nothings gone wrong
                             pygame.display.update()
                             pass
 
-
-    def image_load_handler(self, screen, frames, x_s, y_s, clock, message, font):
+    def image_load_handler(
+            self, screen, frames, x_s, y_s, clock, message, font):
         screen.fill((0, 0, 0))
         pygame.display.update()
 
@@ -203,7 +205,8 @@ class Puntillism():
             text_frame = text.get_rect()
             text_frame.center = (x_s // 2, y_s // 2)
         else:
-            text = font.render(_("Click the Load Image Button"), True, (255, 255, 255), (0, 0, 0))
+            text = font.render(_("Click the Load Image Button"),
+                               True, (255, 255, 255), (0, 0, 0))
             text_frame = text.get_rect()
             text_frame.center = (x_s // 2, y_s // 2)
 
