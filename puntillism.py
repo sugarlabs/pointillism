@@ -39,12 +39,16 @@ class Puntillism():
     def __init__(self, parent):
         self.parent = parent
         self.file_path = "NULL"
+        self._paused = False
 
     def poner_radio1(self, radio):
         self.radio1 = radio
 
     def poner_radio2(self, radio):
         self.radio2 = radio
+
+    def set_paused(self, paused):
+        self._paused = paused
 
     def run(self):
         pygame.init()
@@ -120,6 +124,8 @@ class Puntillism():
 
     def create_rect(self, cad, rect, frames, clock, screen, x_size, y_size):
         for z in range(max(20, int(frames)*10)):
+            if self._paused:
+                break
             x = random.random()
             y = random.random()
             if self.radio1 > self.radio2:

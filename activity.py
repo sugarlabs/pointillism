@@ -52,6 +52,7 @@ class Activity(activity.Activity):
         self.file_path_temp = None
         self.radio_uno = 2
         self.radio_dos = 12
+        self.paused = False
 
         self.actividad = puntillism.Puntillism(self)
 
@@ -131,14 +132,24 @@ class Activity(activity.Activity):
         barra.insert(open_button, 8)
         open_button.show()
 
+        # Pause/Play button:
+
+        pause_play = ToolButton('media-playback-pause')
+        pause_play.set_tooltip(_("Pause"))
+        pause_play.set_accelerator(_('<ctrl>space'))
+        pause_play.connect('clicked', self._pause_play_cb)
+        pause_play.show()
+
+        toolbar_box.toolbar.insert(pause_play, 9)
+
         separator2 = Gtk.SeparatorToolItem()
         separator2.props.draw = False
         separator2.set_expand(True)
-        barra.insert(separator2, 9)
+        barra.insert(separator2, 10)
 
         stop_button = StopButton(self)
         stop_button.props.accelerator = '<Ctrl>q'
-        barra.insert(stop_button, 10)
+        barra.insert(stop_button, -1)
         stop_button.show()
 
         self.set_toolbar_box(toolbar_box)
@@ -196,6 +207,19 @@ class Activity(activity.Activity):
                 self.chooser.destroy()
                 del self.chooser
                 return self.file_path_temp
+
+    def _pause_play_cb(self, button):
+        # Pause or unpause the game.
+        self.paused = not self.paused
+        self.actividad.set_paused(self.paused)
+
+        # Update the button to show the next action.
+        if self.paused:
+            button.set_icon_name('media-playback-start')
+            button.set_tooltip(_("Start"))
+        else:
+            button.set_icon_name('media-playback-pause')
+            button.set_tooltip(_("Pause"))
 
     def return_image_to_pygame(self):
         self.file_path_temp = self.choose_image_from_journal_cb()
