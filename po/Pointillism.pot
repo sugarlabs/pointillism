@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-21 20:12+0300\n"
+"POT-Creation-Date: 2020-01-16 16:17+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: activity/activity.info:2 activity.py:159
+#: activity/activity.info:2 activity.py:172
 msgid "Pointillism"
 msgstr ""
 
@@ -25,30 +25,38 @@ msgstr ""
 msgid "Create a pointillist image from the camera"
 msgstr ""
 
-#: activity.py:83
+#: activity.py:85
 msgid "Circles between"
 msgstr ""
 
-#: activity.py:102
+#: activity.py:104
 msgid "and"
 msgstr ""
 
-#: activity.py:122
+#: activity.py:124
 msgid "Save Image"
 msgstr ""
 
-#: activity.py:128
+#: activity.py:130
 msgid "Open Image"
 msgstr ""
 
-#: puntillism.py:106
+#: activity.py:138 activity.py:222
+msgid "Pause"
+msgstr ""
+
+#: activity.py:139
+msgid "<ctrl>space"
+msgstr ""
+
+#: activity.py:219
+msgid "Start"
+msgstr ""
+
+#: puntillism.py:109
 msgid "Camera not found"
 msgstr ""
 
-#: puntillism.py:175
-msgid "Loading Image Selector..."
-msgstr ""
-
-#: puntillism.py:206
+#: puntillism.py:214
 msgid "Click the Load Image Button"
 msgstr ""
