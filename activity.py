@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # Pointillism
@@ -203,3 +203,8 @@ class Activity(activity.Activity):
 
     def get_preview(self):
         return self._pygamecanvas.get_preview()
+
+    def can_close(self):
+        self.actividad.load_image_loop = False
+        self.actividad.running = False
+        return True
