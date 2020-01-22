@@ -22,6 +22,10 @@
 # Alan Aguiar <alanjas@gmail.com>
 # Nirav Patel <sugarlabs@spongezone.net>
 
+import gi
+gi.require_version('Gdk', '3.0')
+gi.require_version('Gtk', '3.0')
+
 import puntillism
 from gettext import gettext as _
 from sugar3.datastore import datastore
@@ -38,9 +42,6 @@ import pygame
 from gi.repository import Gtk
 from gi.repository import Gdk
 import os
-import gi
-gi.require_version('Gdk', '3.0')
-gi.require_version('Gtk', '3.0')
 
 
 class Activity(activity.Activity):

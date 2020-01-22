@@ -24,9 +24,9 @@
 
 from gettext import gettext as _
 import random
-from gi.repository import Gtk
 import gi
 gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 try:
     import pygame
     from pygame import camera
@@ -123,7 +123,7 @@ class Puntillism():
                                     x_s, y_s, clock, message, font)
 
     def create_rect(self, cad, rect, frames, clock, screen, x_size, y_size):
-        for z in range(max(20, int(frames)*10)):
+        for z in range(max(20, int(frames) * 10)):
             if self._paused:
                 break
             x = random.random()
