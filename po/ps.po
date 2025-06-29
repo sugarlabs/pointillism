@@ -1,0 +1,61 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-01-16 16:17+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ps\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: activity/activity.info:2 activity.py:172
+msgid "Pointillism"
+msgstr ""
+
+#: activity/activity.info:3
+msgid "Create a pointillist image from the camera"
+msgstr ""
+
+#: activity.py:85
+msgid "Circles between"
+msgstr ""
+
+#: activity.py:104
+msgid "and"
+msgstr ""
+
+#: activity.py:124
+msgid "Save Image"
+msgstr ""
+
+#: activity.py:130
+msgid "Open Image"
+msgstr ""
+
+#: activity.py:138 activity.py:222
+msgid "Pause"
+msgstr ""
+
+#: activity.py:139
+msgid "<ctrl>space"
+msgstr ""
+
+#: activity.py:219
+msgid "Start"
+msgstr ""
+
+#: puntillism.py:109
+msgid "Camera not found"
+msgstr ""
+
+#: puntillism.py:214
+msgid "Click the Load Image Button"
+msgstr ""
